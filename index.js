@@ -21,6 +21,7 @@ const tasks = [
 const body = document.body;
 const rootElement = body.querySelector('#tasks');
 const currentTask = {};
+let isLight = true;
 createHTML(rootElement);
 createNewTask();
 printTasks();
@@ -28,7 +29,6 @@ createModal(body);
 openModal();
 closeModal();
 deleteTask();
-changeTheme();
 
 // Element creation function
 function createElement(tag, parent, options = {}, to = 'append') {
@@ -129,6 +129,7 @@ function createNewTask() {
       const { target } = event;
       const input = target.taskName;
       const id = Math.random().toString(16).slice(-4);
+      const trigger = target.className.includes('create-task-block');
 
       removeErrorMessage();
 
@@ -141,6 +142,7 @@ function createNewTask() {
 
         tasksList.innerHTML = '';
         printTasks();
+        changeThemeHandler(event, trigger);
       }
 
       input.value = '';
@@ -168,6 +170,7 @@ function printErrorMessage(msg) {
     cls: ['error-message-block'],
     text: msg,
   });
+
 }
 
 function removeErrorMessage() {
@@ -234,7 +237,10 @@ function deleteTask() {
       const index = tasks.findIndex((task) => task.id === currentTask.id);
       tasks.splice(index, 1)
       rootElement.querySelector('.tasks-list').textContent = '';
+      const trigger = event.target.classList.contains('delete-modal__confirm-button');
+      console.log(trigger);
       printTasks(tasks);
+      changeThemeHandler(event, trigger);
     });
 }
 
@@ -251,28 +257,25 @@ function closeModal() {
 }
 
 // Change theme
-function changeTheme() {
-  let isLight = true;
+const changeThemeHandler = (event, trigger = false) => {
+  const buttons = body.querySelectorAll('button');
+  const labels = rootElement.querySelectorAll('label');
+  if (event.key === 'Tab') event.preventDefault();
 
-  document.addEventListener('keydown', (event) => {
-    const buttons = rootElement.querySelectorAll('button');
-    const labels = rootElement.querySelectorAll('label');
-    if (event.key === 'Tab') event.preventDefault();
+  if (event.key === 'Tab' && isLight || trigger && !isLight) {
+    isLight = false;
+    body.style.backgroundColor = '#24292E';
+    rootElement.style.color = '#FFFFFF';
+    buttons.forEach((button) => button.style.border = '1px solid #FFFFFF');
+    labels.forEach((label) => label.style.setProperty('--checkbox-border-color', '#FFFFFF'));
 
-    if (event.key === 'Tab' && isLight) {
-      isLight = false;
-      body.style.backgroundColor = '#24292E';
-      rootElement.style.color = '#FFFFFF';
-      buttons.forEach((button) => button.style.border = '1px solid #FFFFFF');
-      labels.forEach((label) => label.style.setProperty('--checkbox-border-color', '#FFFFFF'));
-
-    } else if (event.key === 'Tab' && !isLight) {
-      isLight = true;
-      body.style.backgroundColor = '#FFFFFF';
-      rootElement.style.color = '#000000';
-      buttons.forEach((button) => button.style.border = '1px solid transparent');
-      labels.forEach((label) => label.style.setProperty('--checkbox-border-color', '#000000'));
-
-    }
-  })
+  } else if (event.key === 'Tab' && !isLight || trigger && isLight) {
+    isLight = true;
+    body.style.backgroundColor = '#FFFFFF';
+    rootElement.style.color = '#000000';
+    buttons.forEach((button) => button.style.border = '1px solid transparent');
+    labels.forEach((label) => label.style.setProperty('--checkbox-border-color', '#000000'));
+  }
 }
+
+document.addEventListener('keydown', changeThemeHandler);

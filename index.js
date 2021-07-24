@@ -1,17 +1,17 @@
 // Data
 const tasks = [
   {
-    id: 1,
+    id: '1',
     completed: false,
     text: 'Watch the new JavaScript tutorial',
   },
   {
-    id: 2,
+    id: '2',
     completed: false,
     text: 'Take the test after the lesson',
   },
   {
-    id: 3,
+    id: '3',
     completed: false,
     text: 'Do your homework after lesson',
   },
@@ -20,12 +20,15 @@ const tasks = [
 // Global variables & function calls
 const body = document.body;
 const rootElement = body.querySelector('#tasks');
+const currentTask = {};
 createHTML(rootElement);
-createNewTask(tasks);
-printTasks(tasks);
+createNewTask();
+printTasks();
 createModal(body);
-openModal(tasks);
+openModal();
 closeModal();
+deleteTask();
+changeTheme();
 
 // Element creation function
 function createElement(tag, parent, options = {}, to = 'append') {
@@ -110,14 +113,14 @@ function createTaskHTML(task) {
 }
 
 // Function prints tasks
-function printTasks(tasks) {
+function printTasks() {
   tasks.forEach((task) => {
     createTaskHTML(task);
   });
 }
 
 // Function creates new task
-function createNewTask(tasks) {
+function createNewTask() {
   const tasksList = rootElement.querySelector('.tasks-list');
   document
     .querySelector('.create-task-block')
@@ -125,19 +128,19 @@ function createNewTask(tasks) {
       event.preventDefault();
       const { target } = event;
       const input = target.taskName;
-      const id = tasks[tasks.length - 1].id + 1;
+      const id = Math.random().toString(16).slice(-4);
 
-      removerErrorMessage();
+      removeErrorMessage();
 
-      if (checkValidInput(input.value, tasks)) {
-        tasks.push({
+      if (checkValidInput(input.value)) {
+        tasks.unshift({
           id,
           completed: false,
           text: input.value,
         });
 
         tasksList.innerHTML = '';
-        printTasks(tasks);
+        printTasks();
       }
 
       input.value = '';
@@ -145,7 +148,7 @@ function createNewTask(tasks) {
 }
 
 // Input task validation, prints error message, delete error message
-function checkValidInput(text, tasks) {
+function checkValidInput(text) {
   let msg;
 
   if (!text.trim()) {
@@ -167,7 +170,7 @@ function printErrorMessage(msg) {
   });
 }
 
-function removerErrorMessage() {
+function removeErrorMessage() {
   const element = document.querySelector('.error-message-block');
   if (!!element) element.remove();
 }
@@ -201,27 +204,75 @@ function createModal(root) {
   });
 }
 
-function openModal(tasks) {
+function openModal() {
   rootElement
     .querySelector('.tasks-list')
     .addEventListener('click', (event) => {
       const { target } = event;
+
       if (target.closest('.task-item__delete-button')) {
+        const id = target.closest('.task-item').dataset.taskId;
+
         body
           .querySelector('.modal-overlay')
           .classList.remove('modal-overlay_hidden');
-        // deleteTask(target.dataset.deleteTaskId, tasks);
+
+        Object.assign(
+          currentTask,
+          ...tasks.filter(
+            (task) => task.id === id
+          )
+        );
       }
     });
 }
 
+function deleteTask() {
+  body
+    .querySelector('.delete-modal__confirm-button')
+    .addEventListener('click', (event) => {
+      const index = tasks.findIndex((task) => task.id === currentTask.id);
+      tasks.splice(index, 1)
+      rootElement.querySelector('.tasks-list').textContent = '';
+      printTasks(tasks);
+    });
+}
 
 function closeModal() {
-  body.querySelector('.delete-modal__buttons').addEventListener('click', (event) => {
-    const { target } = event;
-    if (target.closest('.delete-modal__button'))
-      body
-        .querySelector('.modal-overlay')
-        .classList.add('modal-overlay_hidden');
-  });
+  body
+    .querySelector('.delete-modal__buttons')
+    .addEventListener('click', (event) => {
+      const { target } = event;
+      if (target.closest('.delete-modal__button'))
+        body
+          .querySelector('.modal-overlay')
+          .classList.add('modal-overlay_hidden');
+    });
+}
+
+// Change theme
+function changeTheme() {
+  let isLight = true;
+
+  document.addEventListener('keydown', (event) => {
+    const buttons = rootElement.querySelectorAll('button');
+    const labels = rootElement.querySelectorAll('label');
+    if (event.key === 'Tab') event.preventDefault();
+
+    if (event.key === 'Tab' && isLight) {
+      isLight = false;
+      body.style.backgroundColor = '#24292E';
+      rootElement.style.color = '#FFFFFF';
+      buttons.forEach((button) => button.style.border = '1px solid #FFFFFF');
+      labels.forEach((label) => label.style.setProperty('--checkbox-border-color', '#FFFFFF'));
+
+    } else if (event.key === 'Tab' && !isLight) {
+      isLight = true;
+      body.style.backgroundColor = '#FFFFFF';
+      rootElement.style.color = '#000000';
+      buttons.forEach((button) => button.style.border = '1px solid transparent');
+      labels.forEach((label) => label.style.setProperty('--checkbox-border-color', '#000000'));
+
+    }
+  })
 }

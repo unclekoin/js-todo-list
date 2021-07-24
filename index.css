@@ -16,6 +16,7 @@ html {
 }
 
 body {
+    font-family: 'Montserrat', sans-serif;
     padding: 0;
     margin: 0;
 }
@@ -71,7 +72,7 @@ body {
     border: 2px solid var(--primary-color);
     border-radius: 5px;
     color: var(--primary-color);
-  
+    font-family: 'Montserrat', sans-serif;
     font-size: 2rem;
     line-height: 2.5rem;
     height: 40px;
@@ -86,6 +87,7 @@ body {
 
 .create-task-block__button,
 .task-item__delete-button {
+    font-family: 'Montserrat', sans-serif;
     cursor: pointer;
 
     background-color: var(--primary-color);
@@ -93,7 +95,7 @@ body {
     border: none;
     padding: 5px 20px;
     border-radius: 5px;
-  
+
     font-size: 1.5rem;
     line-height: 2.5rem;
 }
@@ -141,18 +143,18 @@ body {
     line-height: 2.5rem;
 }
 
-.checkbox-form__checkbox + label {
+.checkbox-form__checkbox+label {
     display: block;
     margin: 0.2em;
     cursor: pointer;
     padding: 0.2em;
 }
-  
-.checkbox-form__checkbox  {
+
+.checkbox-form__checkbox {
     display: none;
 }
-  
-.checkbox-form__checkbox + label:before {
+
+.checkbox-form__checkbox+label:before {
     content: "\2714";
     border: 0.1em solid var(--checkbox-border-color);
     border-radius: 0.2em;
@@ -167,21 +169,21 @@ body {
     transition: .2s;
 }
 
-.checkbox-form__checkbox + label:active:before {
+.checkbox-form__checkbox+label:active:before {
     transform: scale(0);
 }
 
-.checkbox-form__checkbox:checked + label:before {
+.checkbox-form__checkbox:checked+label:before {
     background-color: var(--checkbox-checked-background);
     border-color: var(--checkbox-checked-background);
     color: var(--checkbox-text-color);
 }
 
-.checkbox-form__checkbox:disabled + label:before {
+.checkbox-form__checkbox:disabled+label:before {
     transform: scale(1);
 }
 
-.checkbox-form__checkbox:checked:disabled + label:before {
+.checkbox-form__checkbox:checked:disabled+label:before {
     transform: scale(1);
     background-color: var(--checkbox-checked-background);
     border-color: var(--checkbox-checked-background);

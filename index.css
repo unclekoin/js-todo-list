@@ -240,7 +240,7 @@ body {
     top: 0;
     width: 50%;
     height: fit-content;
-    padding: 15px 25px;
+    padding: 25px;
 
     border: 2px solid var(--text-color);
     border-radius: 5px;
